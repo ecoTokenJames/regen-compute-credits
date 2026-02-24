@@ -7,9 +7,11 @@
  * Schema discovered via introspection on 2026-02-18.
  */
 
-const REGEN_INDEXER_URL =
-  process.env.REGEN_INDEXER_URL ||
-  "https://api.regen.network/indexer/v1/graphql";
+import { loadConfig } from "../config.js";
+
+function getIndexerUrl(): string {
+  return loadConfig().indexerUrl;
+}
 
 interface GraphQLResponse<T> {
   data: T;
@@ -20,7 +22,7 @@ async function queryGraphQL<T>(
   query: string,
   variables?: Record<string, unknown>
 ): Promise<T> {
-  const response = await fetch(REGEN_INDEXER_URL, {
+  const response = await fetch(getIndexerUrl(), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query, variables }),
