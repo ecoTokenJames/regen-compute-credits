@@ -2,9 +2,10 @@ import { estimateFootprint } from "../services/estimator.js";
 
 export async function estimateSessionFootprint(
   sessionMinutes: number,
-  toolCalls?: number
+  toolCalls?: number,
+  agentMode?: boolean
 ) {
-  const estimate = estimateFootprint(sessionMinutes, toolCalls);
+  const estimate = estimateFootprint(sessionMinutes, toolCalls, agentMode);
 
   const text = [
     `## Estimated Session Ecological Footprint`,
@@ -12,6 +13,7 @@ export async function estimateSessionFootprint(
     `| Metric | Value |`,
     `|--------|-------|`,
     `| Session duration | ${estimate.session_minutes} minutes |`,
+    `| Session type | ${estimate.agent_mode ? "AI agent (e.g. Claude Code, Cursor)" : "Standard AI chat"} |`,
     `| Estimated queries | ~${estimate.estimated_queries} |`,
     `| Energy consumption | ~${estimate.energy_kwh} kWh |`,
     `| CO2 equivalent | ~${estimate.co2_kg} kg |`,
