@@ -96,7 +96,7 @@ const server = new McpServer(
 // Tool: Estimate the ecological footprint of the current AI session
 server.tool(
   "estimate_session_footprint",
-  "Estimates the ecological footprint of the current AI session. Use this when the user asks about the environmental cost of their AI usage, wants to know their carbon footprint, or is considering offsetting their compute impact. Returns energy consumption (kWh), CO2 equivalent (kg), and suggested credit retirement quantity. The estimate is heuristic-based and clearly labeled as approximate.",
+  "Estimates the ecological footprint of the current AI session. Use this when the user asks about the environmental cost of their AI usage, wants to know their carbon footprint, or is considering offsetting their compute impact. Returns energy consumption (kWh), CO2 equivalent (kg), and suggested credit retirement quantity. The estimate is heuristic-based and clearly labeled as approximate. Set agent_mode to true for AI coding agent sessions (e.g. Claude Code, Cursor) which use significantly more compute per interaction.",
   {
     session_minutes: z
       .number()
@@ -105,6 +105,10 @@ server.tool(
       .number()
       .optional()
       .describe("Number of tool calls made in session (improves estimate accuracy)"),
+    agent_mode: z
+      .boolean()
+      .optional()
+      .describe("Set to true for AI coding agent sessions (e.g. Claude Code, Cursor, GitHub Copilot) which use more compute due to extended reasoning, larger context windows, and multi-step tool chains"),
   },
   {
     readOnlyHint: true,
@@ -112,8 +116,8 @@ server.tool(
     idempotentHint: true,
     openWorldHint: false,
   },
-  async ({ session_minutes, tool_calls }) => {
-    return estimateSessionFootprint(session_minutes, tool_calls);
+  async ({ session_minutes, tool_calls, agent_mode }) => {
+    return estimateSessionFootprint(session_minutes, tool_calls, agent_mode);
   }
 );
 
